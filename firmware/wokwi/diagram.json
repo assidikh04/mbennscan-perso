@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "author": "MbënnScan Team",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 30, "left": 0, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic", "top": -140, "left": 60, "attrs": { "distance": "50" } },
+    { "type": "wokwi-led", "id": "led", "top": -40, "left": -80, "attrs": { "color": "blue" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 10, "left": -70, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.1", "ultrasonic:GND", "black", [ "v-20", "h40" ] ],
+    [ "esp:5V", "ultrasonic:VCC", "red", [ "v-30", "h60" ] ],
+    [ "esp:5", "ultrasonic:TRIG", "blue", [ "v-40", "h30" ] ],
+    [ "esp:18", "ultrasonic:ECHO", "green", [ "v-50", "h10" ] ],
+    [ "esp:2", "led:A", "cyan", [ "h-20" ] ],
+    [ "led:C", "r1:1", "black", [ "v10" ] ],
+    [ "r1:2", "esp:GND.1", "black", [ "v20", "h50" ] ]
+  ],
+  "dependencies": {}
+}

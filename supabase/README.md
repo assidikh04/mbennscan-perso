@@ -20,7 +20,24 @@ Le schéma a été testé sur PostgreSQL 16 + PostGIS 3 avec les mocks : `zones_
 | `balises_publiques` (vue sans la clé) | `balises.schema.json` |
 | `mesures` + Realtime | `mesures.schema.json` |
 
-## À faire
+## Déploiement de l'Edge Function « mesure »
 
-- [ ] Edge Function `functions/mesure/index.ts` (Aboubacry) : vérifier `Authorization: Bearer <clé>` contre `balises.cle_api_hash` (SHA-256), valider le corps avec `mesure_entrante.schema.json`, insérer avec la clé `service_role`, limiter à une mesure par seconde. Réponses 201 / 400 / 401 / 429.
-- [ ] Script d'enregistrement d'une balise (génère la clé, stocke son hachage).
+1. Lier votre projet distant Supabase :
+   ```bash
+   supabase link --project-ref <id-du-projet>
+   ```
+2. Déployer la fonction `mesure` (ne requiert pas de vérification JWT standard car la balise s'authentifie via sa clé SHA-256) :
+   ```bash
+   supabase functions deploy mesure --no-verify-jwt
+   ```
+3. L'URL d'ingestion sera : `https://<id-du-projet>.supabase.co/functions/v1/mesure`
+
+## Enregistrer une balise
+
+Utiliser le script pour créer une balise, générer sa clé secrète et insérer son empreinte SHA-256 :
+
+```bash
+python scripts/enregistrer_balise.py --id bal-01 --nom "Bac de démonstration" --hauteur 80 --seuil 40 --lon -17.312 --lat 14.785
+```
+
+Puis coller la requête SQL générée dans l'éditeur SQL Supabase, et reporter la clé dans `firmware/include/secrets.h`.
